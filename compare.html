@@ -1,0 +1,99 @@
+<div style="width: 500px; height: 400px">
+
+<canvas id="chart" width="400" height="400"></canvas>
+    
+    </div>
+
+<script>
+
+        /*var chart = $("#chart");
+    
+        var data = {
+        labels: ["Points", "Rebounds", "Assists", "Steals", "Blocks", "Turnovers"],
+        datasets: [
+            {
+                label: "Player 1",
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.4)',
+                    'rgba(255, 99, 132, 0.4)',
+                    'rgba(255, 99, 132, 0.4)',
+                    'rgba(255, 99, 132, 0.4)',
+                    'rgba(255, 99, 132, 0.4)',
+                    'rgba(255, 99, 132, 0.4)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(255,99,132,1)'
+                ],
+                borderWidth: 1,
+                data: [28, 7, 5, 2, 1, 3],
+            },
+            {
+                label: "Player 2",
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.4)',
+                    'rgba(54, 162, 235, 0.4)',
+                    'rgba(54, 162, 235, 0.4)',
+                    'rgba(54, 162, 235, 0.4)',
+                    'rgba(54, 162, 235, 0.4)',
+                    'rgba(54, 162, 235, 0.4)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1,
+                data: [25, 12, 2, 1, 3, 1.5],
+            }
+        ]
+        };
+    
+    var options = {
+        animation: {
+          onProgress: drawBarValues,
+          onComplete: drawBarValues
+        },
+        hover: { animationDuration: 0 },
+                   scales: {
+                    xAxes: [{
+                        gridLines: {drawOnChartArea: false}
+                    }],
+                    yAxes: [{
+                        gridLines: {drawOnChartArea: false}
+                    }]
+            }
+        };
+    
+    function drawBarValues() {
+      // render the value of the chart above the bar
+      var ctx = this.chart.ctx;
+      ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+      ctx.fillStyle = this.chart.config.options.defaultFontColor;
+      ctx.textAlign = 'bottom';
+      ctx.textBaseline = 'center';
+      this.data.datasets.forEach(function (dataset) {
+        for (var i = 0; i < dataset.data.length; i++) {
+          if(dataset.hidden === true && dataset._meta[Object.keys(dataset._meta)[0]].hidden !== false){ continue; }
+          var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+          if(dataset.data[i] !== null){
+            ctx.fillText(dataset.data[i], model.x + 5, model.y - 5);
+          }
+        }
+      });
+    }
+        
+        var barChart = new Chart(chart, {
+            type: 'horizontalBar',
+            data: data,
+            options: options
+        });*/
+    
+</script>

@@ -1,0 +1,73 @@
+<!-- <!doctype html>
+
+<html>
+
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="bundle.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        
+    </head>
+    
+
+    <body ng-app="nbaStats" ng-controller="nbaStatsController">
+        
+    <div header></div>
+        
+        <div ng-view></div> -->
+
+    <form>
+        <div class="form-group" style="float:right">
+            <label for="search">Quick Search</label>
+            <input type="text" name="input" ng-model="search.text" placeholder="Player Name">
+            <button type="button" class="btn btn-default" ng-click="search()">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            </button>
+        </div>
+    </form>
+    
+    <table class="table table-hover">
+        <thead>
+            <tr class="info">
+                <th>Name</th>
+                <th>Games <span ng-click="sort('gp')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Minutes <span ng-click="sort('min')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Points <span ng-click="sort('pts')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Rebounds <span ng-click="sort('reb')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Assists <span ng-click="sort('ast')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Steals <span ng-click="sort('stl')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Blocks <span ng-click="sort('blk')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Turnovers <span ng-click="sort('tov')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Field Goal % <span ng-click="sort('fgPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>3 Point % <span ng-click="sort('fg3Pct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Free Throw % <span ng-click="sort('ftPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="player in playerList">
+                <td>
+                    <img  style="width:85px" class="displayed" src="http://stats.nba.com/media/players/132x132/{{player.playerId}}.png">
+                    {{player.playerName}} ({{player.teamAbbreviation}})</td>
+                <td>{{player.gp}}</td>
+                <td>{{player.min}}</td>
+                <td>{{player.pts}}</td>
+                <td>{{player.reb}}</td>
+                <td>{{player.ast}}</td>
+                <td>{{player.stl}}</td>
+                <td>{{player.blk}}</td>
+                <td>{{player.tov}}</td>
+                <td>{{player.fgPct}}</td>
+                <td>{{player.fg3Pct}}</td>
+                <td>{{player.ftPct}}</td>
+            </tr>
+        </tbody>
+    </table>
+        
+    <!-- </body>
+    
+    
+    
+</html> -->

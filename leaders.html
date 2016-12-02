@@ -1,0 +1,108 @@
+<br>
+<div class="col-md-4">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+          <h3 class="panel-title"><a ng-click="sort('pts')" href="#/">Points Per Game: </a></h3>
+      </div>
+      <div class="panel-body">
+        <ol>
+        <li ng-repeat="player in top5Pts">{{player.playerName}} - {{player.pts}}</li>
+        </ol>
+          <a ng-click="sort('pts')" href="#/">See full list</a>
+      </div>
+    </div>
+</div>
+    
+<div class="col-md-4">
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <h3 class="panel-title"><a ng-click="sort('reb')" href="#/">Rebounds Per Game: </a></h3>
+      </div>
+      <div class="panel-body">
+        <ol>
+        <li ng-repeat="player in top5Reb">{{player.playerName}} - {{player.reb}}</li>
+        </ol>
+          <a ng-click="sort('reb')" href="#/">See full list</a>
+      </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title"><a ng-click="sort('ast')" href="#/">Assists Per Game: </a></h3>
+      </div>
+      <div class="panel-body">
+        <ol>
+        <li ng-repeat="player in top5Ast">{{player.playerName}} - {{player.ast}}</li>
+        </ol>
+          <a ng-click="sort('ast')" href="#/">See full list</a>
+      </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="panel-title"><a ng-click="sort('stl')" href="#/">Steals Per Game: </a></h3>
+      </div>
+      <div class="panel-body">
+        <ol>
+        <li ng-repeat="player in top5Stl">{{player.playerName}} - {{player.stl}}</li>
+        </ol>
+          <a ng-click="sort('stl')" href="#/">See full list</a>
+      </div>
+    </div>
+</div>
+    
+<div class="col-md-4">
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+        <h3 class="panel-title"><a ng-click="sort('blk')" href="#/">Blocks Per Game: </a></h3>
+      </div>
+      <div class="panel-body">
+        <ol>
+        <li ng-repeat="player in top5Blk">{{player.playerName}} - {{player.blk}}</li>
+        </ol>
+          <a ng-click="sort('blk')" href="#/">See full list</a>
+      </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><a ng-click="sort('fgPct')" href="#/">Field Goal %: </a></h3>
+      </div>
+      <div class="panel-body">
+        <ol>
+        <li ng-repeat="player in top5fgPct">{{player.playerName}} - {{player.fgPct}}</li>
+        </ol>
+          <a ng-click="sort('fgPct')" href="#/">See full list</a>
+      </div>
+    </div>
+</div>
+
+<br/>
+
+<!-- <div class="col-md-4">
+    <h3>Points Per Game: </h3> 
+    <ol>
+        <li ng-repeat="player in top5Pts">{{player.playerName}} - {{player.pts}}</li>
+    </ol>
+</div>
+
+<div class="col-md-4">
+    <h3>Rebounds Per Game: </h3> 
+    <ol>
+        <li ng-repeat="player in top5Reb">{{player.playerName}} - {{player.reb}}</li>
+    </ol>
+</div>
+
+<div class="col-md-4">
+    <h3>Assists Per Game: </h3> 
+    <ol>
+        <li ng-repeat="player in top5Ast">{{player.playerName}} - {{player.ast}}</li>
+    </ol>
+</div> -->
+    

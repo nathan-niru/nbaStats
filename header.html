@@ -1,0 +1,31 @@
+<div>
+    
+    <!-- <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#list">List</a></li>
+      <li><a data-toggle="tab" href="#top">Top</a></li>
+    </ul> -->
+    
+    <a class="btn btn-primary" role="button" ng-click="allPlayers()" href="#/" aria-expanded="false" aria-controls="collapseExample">
+        Player List
+    </a>
+    
+    <a class="btn btn-primary" role="button" href="#leaders" aria-expanded="false" aria-controls="collapseExample">
+        Leaders
+    </a>
+
+    <a class="btn btn-primary" role="button" href="#compare" aria-expanded="false" aria-controls="collapseExample">
+        Player Comparison
+    </a>
+    
+    <select ng-init="season.singleSelect = season.options[0].year" ng-model="season.singleSelect" ng-change="changeSeason()">
+        <option ng-repeat="option in season.options" value="{{option.year}}">{{option.year}}</option>
+    </select>
+    
+    <select ng-init="seasonType.singleSelect = seasonType.options[0].type" ng-model="seasonType.singleSelect" ng-change="changeSeason()">
+        <option ng-repeat="option in seasonType.options" value="{{option.type}}">{{option.type}}</option>
+    </select>
+    
+    <i id="spinner" class="fa fa-refresh fa-spin" style="font-size:24px; display:none"></i>
+
+
+</div>
