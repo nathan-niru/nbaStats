@@ -1,52 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-    
 $(document).ready(function() {
     
-    /*
     
-    $.ajax({
-  type:'GET',
-  url: "http://stats.nba.com/stats/commonallplayers/?LeagueID=00&Season=2012-13&IsOnlyCurrentSeason=0&callback=playerinfocallback",
-  data: {},
-  success: function(data) {
-   console.log(data); 
-  }, error: function(jqXHR, textStatus, errorThrown) {
-   console.log(errorThrown); 
-  }
-});
-
-
-
-    $.get(
-        "http://stats.nba.com/stats/commonallplayers/?LeagueID=00&Season=2012-13&IsOnlyCurrentSeason=0&callback=playerinfocallback",
-        function(data) {
-        alert('test');
-            console.log(data);
-        }
-    );
-    
-    
-    
-
-    function getData(url, callback) {
-        var http = new XMLHttpRequest();
-        http.onreadystatechange = function() {
-            if (http.readyState == 4 && http.status == 200) {
-                process(http.responseText);
-            }
-        }
-        http.open("GET", "http://stats.nba.com/stats/commonallplayers/?LeagueID=00&Season=2012-13&IsOnlyCurrentSeason=0&callback=playerinfocallback", true);
-        http.send(null);
-    };
-    
-    function process(data) {
-        //console.log(data);
-    };
-    
-    //getData(); */
-    
-    
-    var module = angular.module('nbaStats', ["ngRoute"]);
+    var module = angular.module('nbaStats', ["ngRoute", "chart.js"]);
         
     module.directive('header', function () {
         return {
@@ -162,44 +118,56 @@ $(document).ready(function() {
             }
         };
         
+        $scope.colors = [{backgroundColor:'rgba(255, 99, 132, 0.4)'},
+                         {backgroundColor:'rgba(54, 162, 235, 0.4)'}];
         
-        require(['Chart.min.js'], function(Chart) { 
-        //var Chart = require('Chart.min.js');
-        //alert($("#chart"));
-        var chart = $("#chart");
-        var chartData = {
-            labels: ["Points", "Rebounds", "Assists", "Steals", "Blocks", "Turnovers"],
-            datasets: [
-                {
-                    label: "My First dataset",
-                    backgroundColor: "rgba(179,181,198,0.2)",
-                    borderColor: "rgba(179,181,198,1)",
-                    pointBackgroundColor: "rgba(179,181,198,1)",
-                    pointBorderColor: "#fff",
-                    pointHoverBackgroundColor: "#fff",
-                    pointHoverBorderColor: "rgba(179,181,198,1)",
-                    data: [30, 11, 2, 2, 3, 3]
-                },
-                {
-                    label: "My Second dataset",
-                    backgroundColor: "rgba(255,99,132,0.2)",
-                    borderColor: "rgba(255,99,132,1)",
-                    pointBackgroundColor: "rgba(255,99,132,1)",
-                    pointBorderColor: "#fff",
-                    pointHoverBackgroundColor: "#fff",
-                    pointHoverBorderColor: "rgba(255,99,132,1)",
-                    data: [25, 7, 11, 2, 0.3, 4]        
+        $scope.labels = ["Points", "Rebounds", "Assists", "Steals", "Blocks", "Turnovers"];
+        $scope.data = [
+                [28, 7, 5, 2, 1, 3],
+                [25, 12, 2, 1, 3, 1.5]       
+                ];
+        
+        $scope.options = {
+            animation: {
+              //onProgress: drawBarValues,
+              onComplete: drawBarValues
+            },
+            hover: { animationDuration: 0 },
+            tooltips: {
+                enabled: false
+            },
+            scales: {
+                xAxes: [{
+                    gridLines: {drawOnChartArea: false}
+                }],
+                yAxes: [{
+                    gridLines: {drawOnChartArea: false}
                 }]
+            }
         };
         
-        var radarChart = new Chart(chart, {
-            type: 'radar',
-            data: chartData
-        });
-        });
-        
+        function drawBarValues() {
+          // render the value of the chart beside the bar
+          var ctx = this.chart.ctx;
+          ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
+          ctx.fillStyle = this.chart.config.options.defaultFontColor;
+          ctx.textAlign = 'bottom';
+          ctx.textBaseline = 'center';
+          this.data.datasets.forEach(function (dataset) {
+            for (var i = 0; i < dataset.data.length; i++) {
+              if(dataset.hidden === true && dataset._meta[Object.keys(dataset._meta)[0]].hidden !== false){ continue; }
+              var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+              if(dataset.data[i] !== null){
+                ctx.fillText(dataset.data[i], model.x + 5, model.y + 3);
+              }
+            }
+          });
+        }
+            
+  
+  
     });
-    
+    // end of controller
     
         module.factory('nbaService', function($q) {
            var nba = require('nba');
@@ -216,10 +184,6 @@ $(document).ready(function() {
                 getPlayerList : getPlayerList
             }
         });
-    
-
-    
-    
     
 })
 },{"nba":4}],2:[function(require,module,exports){
