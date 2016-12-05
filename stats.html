@@ -22,12 +22,14 @@
     <form>
         <div class="form-group" style="float:right">
             <label for="search">Quick Search</label>
-            <input type="text" name="input" ng-model="search.text" placeholder="Player Name">
-            <button type="button" class="btn btn-default" ng-click="search()">
+            <input type="text" name="input" ng-model="searchText.text" placeholder="Player Name">
+            <button type="button" class="btn btn-default" ng-click="setPage(1); search(0)">
                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
             </button>
         </div>
     </form>
+
+    <ul uib-pagination total-items="pagination.totalItems" ng-model="pagination.currentPage" max-size="pagination.maxSize" class="pagination-sm" boundary-links="true" items-per-page="pagination.itemsPerPage" style="margin-bottom:0"></ul>
     
     <table class="table table-hover">
         <thead>
@@ -47,7 +49,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="player in playerList">
+            <tr ng-repeat="player in playerList.slice(((pagination.currentPage-1)*pagination.itemsPerPage), ((pagination.currentPage)*pagination.itemsPerPage))">
                 <td>
                     <img  style="width:85px" class="displayed" src="http://stats.nba.com/media/players/132x132/{{player.playerId}}.png">
                     {{player.playerName}} ({{player.teamAbbreviation}})</td>

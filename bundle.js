@@ -2,7 +2,7 @@
 $(document).ready(function() {
     
     
-    var module = angular.module('nbaStats', ["ngRoute", "chart.js"]);
+    var module = angular.module('nbaStats', ["ngRoute", "chart.js", 'ngAnimate', 'ngSanitize', "ui.bootstrap", "ngMaterial"]);
         
     module.directive('header', function () {
         return {
@@ -31,7 +31,9 @@ $(document).ready(function() {
     module.controller('nbaStatsController', function nbaStatsController($scope, nbaService) {
     
         //var nba = require('nba');
-        $scope.search = {};
+        $scope.searchText = {};
+        $scope.compare1 = {};
+        $scope.compare2 = {};
         $scope.searchResult = [];
         $scope.season = {
             singleSelect: "",
@@ -49,6 +51,16 @@ $(document).ready(function() {
                 {type: "Regular Season"}, 
                 {type: "Playoffs"}]
         };
+        $scope.playerList = [];
+        $scope.pagination = {
+            currentPage: 1,
+            itemsPerPage: 25,
+            maxSize: 5,
+            totalItems: 0
+        };
+        $scope.selectedPlayer1 = {};
+        $scope.selectedPlayer2 = {};
+        
         var allPlayers;
         var allPlayoffPlayers;
 
@@ -57,6 +69,7 @@ $(document).ready(function() {
                 allPlayers = playerList.leagueDashPlayerStats;
                 getTop5();
                 $scope.playerList = allPlayers.sort(sortBy("pts"));
+                $scope.pagination.totalItems = $scope.playerList.length;
                 $("#spinner").hide();
                 console.log($scope.playerList);
             });
@@ -64,7 +77,7 @@ $(document).ready(function() {
         
         $scope.getPlayerData("2016-17", "Regular Season");
         
-        // filter players with less than x games (primarily for fg%, also add 3p and ft %s)
+        // TODO filter players with less than x games (primarily for fg%, also add 3p and ft %s)
         function getTop5() {
             $scope.top5Pts = allPlayers.sort(sortBy("pts")).slice(0,5);
             $scope.top5Reb = allPlayers.sort(sortBy("reb")).slice(0,5);
@@ -78,20 +91,29 @@ $(document).ready(function() {
             $scope.playerList = allPlayers.sort(sortBy("pts"));
         };
         
+        $scope.setPage = function(pageNo) {
+            $scope.pagination.currentPage = pageNo;
+        };
+                
         $scope.changeSeason = function() {
             $("#spinner").show();
             $scope.getPlayerData($scope.season.singleSelect, $scope.seasonType.singleSelect);
         };
         
-        $scope.search = function() {
+        $scope.search = function(num) {
+            var compare;
+            if (num == 0) {compare = $scope.searchText.text;}
+            if (num == 1) {compare = $scope.compare1.text;}
+            if (num == 2) {compare = $scope.compare2.text;}
             $scope.searchResult = [];
             for (let p in allPlayers) {
-                if (allPlayers[p].playerName.toUpperCase().includes($scope.search.text.toUpperCase())) {
+                if (allPlayers[p].playerName.toUpperCase().includes(compare.toUpperCase())) {
                     $scope.searchResult.push(allPlayers[p]);
                 }
             }
             $scope.playerList = $scope.searchResult;
-            console.log($scope.searchResult);
+            $scope.searchText.text = "";
+            return $scope.playerList;
         };
         
 
@@ -99,6 +121,14 @@ $(document).ready(function() {
         $scope.sort = function(stat) {
             $scope.playerList = allPlayers;
             $scope.playerList.sort(sortBy(stat));
+        };
+        
+        // selectedPlayer not updating in cntl so pass player from view instead
+        $scope.updateData = function(player, num) {
+            if (player != undefined) {
+                $scope.data[num] = [player.pts, player.reb, player.ast, player.stl, player.blk, player.tov];
+                $scope.data2[num] = [player.fgPct, player.fg3Pct, player.ftPct];
+            }
         }
         
         
@@ -122,9 +152,14 @@ $(document).ready(function() {
                          {backgroundColor:'rgba(54, 162, 235, 0.4)'}];
         
         $scope.labels = ["Points", "Rebounds", "Assists", "Steals", "Blocks", "Turnovers"];
+        $scope.labels2 = ["Field Goal", "3 Point", "Free Throw"];
         $scope.data = [
-                [28, 7, 5, 2, 1, 3],
-                [25, 12, 2, 1, 3, 1.5]       
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0]       
+                ];
+        $scope.data2 = [
+                [0, 0, 0],
+                [0, 0, 0]       
                 ];
         
         $scope.options = {
@@ -138,10 +173,12 @@ $(document).ready(function() {
             },
             scales: {
                 xAxes: [{
-                    gridLines: {drawOnChartArea: false}
+                    gridLines: {drawOnChartArea: false},
+                    ticks: {beginAtZero: true}
                 }],
                 yAxes: [{
-                    gridLines: {drawOnChartArea: false}
+                    gridLines: {drawOnChartArea: false},
+                    ticks: {beginAtZero: true}
                 }]
             }
         };

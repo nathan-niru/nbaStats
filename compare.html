@@ -1,104 +1,35 @@
-<div style="width: 700px; height: 500px">
+<br/>
 
-<!-- <canvas id="chart" width="400" height="400"></canvas> -->
-    
-    <br/>
-    <canvas class="chart chart-horizontalBar" chart-data="data" chart-labels="labels" chart-options="options"
-    chart-series="series" chart-colors="colors" chart-click="onClick"></canvas> 
+    <div class="col-md-4">
+    <md-autocomplete md-selected-item="selectedPlayer1.player" md-search-text="compare1.text" md-items="player in search(1)" md-item-text="player.playerName" md-selected-item-change="updateData(player, 0)" style="background-color: rgba(255, 99, 132, 0.4)">
+        <span md-highlight-text="searchText.text">{{player.playerName}}</span>
+    </md-autocomplete>  
+    </div>
 
-<!-- <cjs-radar dataset="someData" options="someOptions" segement-stroke-width="5"></cjs-radar> -->
-    
-</div>
+    <div class="col-md-1">
+    <img style="width:85px" class="displayed" src="http://stats.nba.com/media/players/132x132/{{selectedPlayer1.player.playerId}}.png">
+    </div>
 
-<script>
-        /*var chart = $("#chart");
+    <div class="col-md-1">
+    <img style="width:85px" class="displayed" src="http://stats.nba.com/media/players/132x132/{{selectedPlayer2.player.playerId}}.png">
+    </div>
+
+    <div class="col-md-4">
+    <md-autocomplete md-selected-item="selectedPlayer2.player" md-search-text="compare2.text" md-items="player in search(2)" md-item-text="player.playerName" md-selected-item-change="updateData(player, 1)" style="background-color: rgba(54, 162, 235, 0.4)">
+        <span md-highlight-text="searchText.text">{{player.playerName}}</span>
+    </md-autocomplete>  
+    </div>
+
+<br/><br/><br/><br/><br/>
     
-        var data = {
-        labels: ["Points", "Rebounds", "Assists", "Steals", "Blocks", "Turnovers"],
-        datasets: [
-            {
-                label: "Player 1",
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.4)',
-                    'rgba(255, 99, 132, 0.4)',
-                    'rgba(255, 99, 132, 0.4)',
-                    'rgba(255, 99, 132, 0.4)',
-                    'rgba(255, 99, 132, 0.4)',
-                    'rgba(255, 99, 132, 0.4)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)'
-                ],
-                borderWidth: 1,
-                data: [28, 7, 5, 2, 1, 3],
-            },
-            {
-                label: "Player 2",
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.4)',
-                    'rgba(54, 162, 235, 0.4)',
-                    'rgba(54, 162, 235, 0.4)',
-                    'rgba(54, 162, 235, 0.4)',
-                    'rgba(54, 162, 235, 0.4)',
-                    'rgba(54, 162, 235, 0.4)'
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)'
-                ],
-                borderWidth: 1,
-                data: [25, 12, 2, 1, 3, 1.5],
-            }
-        ]
-        };
-    
-    var options = {
-        animation: {
-          onProgress: drawBarValues,
-          onComplete: drawBarValues
-        },
-        hover: { animationDuration: 0 },
-                   scales: {
-                    xAxes: [{
-                        gridLines: {drawOnChartArea: false}
-                    }],
-                    yAxes: [{
-                        gridLines: {drawOnChartArea: false}
-                    }]
-            }
-        };
-    
-    function drawBarValues() {
-      // render the value of the chart above the bar
-      var ctx = this.chart.ctx;
-      ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart.defaults.global.defaultFontFamily);
-      ctx.fillStyle = this.chart.config.options.defaultFontColor;
-      ctx.textAlign = 'bottom';
-      ctx.textBaseline = 'center';
-      this.data.datasets.forEach(function (dataset) {
-        for (var i = 0; i < dataset.data.length; i++) {
-          if(dataset.hidden === true && dataset._meta[Object.keys(dataset._meta)[0]].hidden !== false){ continue; }
-          var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
-          if(dataset.data[i] !== null){
-            ctx.fillText(dataset.data[i], model.x + 5, model.y - 5);
-          }
-        }
-      });
-    }
-        
-        var barChart = new Chart(chart, {
-            type: 'horizontalBar',
-            data: data,
-            options: options
-        });*/
-    
-</script>
+    <div class="col-md-6">
+        <h4>Basic Stats per Game:</h4>
+        <canvas class="chart chart-horizontalBar" chart-data="data" chart-labels="labels" chart-options="options" chart-series="series" chart-colors="colors"></canvas> 
+
+    </div>
+
+    <div class="col-md-6">
+        <h4>Shooting Percentages:</h4>
+        <canvas class="chart chart-horizontalBar" chart-data="data2" chart-labels="labels2" chart-options="options" chart-series="series" chart-colors="colors"></canvas> 
+
+    </div>
