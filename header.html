@@ -5,15 +5,15 @@
       <li><a data-toggle="tab" href="#top">Top</a></li>
     </ul> -->
     
-    <a class="btn btn-default" role="button" ng-click="allPlayers()" href="#/" aria-expanded="false" aria-controls="collapseExample">
+    <a class="btn btn-default" role="button" href="#/" aria-expanded="false" aria-controls="collapseExample" ng-click="allPlayers()"> 
         Player List
     </a>
     
-    <a class="btn btn-default" role="button" href="#leaders" aria-expanded="false" aria-controls="collapseExample">
+    <a class="btn btn-default" role="button" href="#leaders" aria-expanded="false" aria-controls="collapseExample" ng-click="allPlayers()">
         Leaders
     </a>
 
-    <a class="btn btn-default" role="button" href="#compare" aria-expanded="false" aria-controls="collapseExample">
+    <a class="btn btn-default" role="button" href="#compare" aria-expanded="false" aria-controls="collapseExample" ng-click="allPlayers()">
         Player Comparison
     </a>
     
@@ -23,6 +23,10 @@
     
     <select ng-init="seasonType.singleSelect = seasonType.options[0].type" ng-model="seasonType.singleSelect" ng-change="changeSeason()">
         <option ng-repeat="option in seasonType.options" value="{{option.type}}">{{option.type}}</option>
+    </select>
+    
+    <select ng-init="teams.singleSelect = teams.options[0].team" ng-model="teams.singleSelect" ng-change="setTeam()">
+        <option ng-repeat="option in teams.options" value="{{option.team}}">{{option.team}}</option>
     </select>
     
     <i id="spinner" class="fa fa-refresh fa-spin" style="font-size:24px; display:none"></i>

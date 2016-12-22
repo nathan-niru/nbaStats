@@ -49,7 +49,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="player in playerList.slice(((pagination.currentPage-1)*pagination.itemsPerPage), ((pagination.currentPage)*pagination.itemsPerPage))">
+            <tr ng-repeat="player in playerList.slice(((pagination.currentPage-1)*pagination.itemsPerPage), ((pagination.currentPage)*pagination.itemsPerPage)) | filter">
+                <!-- <tr ng-repeat="player in playerList | filter:searchText.text | startFrom:((pagination.currentPage-1)*pagination.itemsPerPage) | limitTo:((pagination.currentPage)*pagination.itemsPerPage)"> -->
                 <td>
                     <img  style="width:85px" class="displayed" src="http://stats.nba.com/media/players/132x132/{{player.playerId}}.png">
                     {{player.playerName}} ({{player.teamAbbreviation}})</td>

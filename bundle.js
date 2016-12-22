@@ -28,7 +28,7 @@ $(document).ready(function() {
         });
     });
     
-    module.controller('nbaStatsController', function nbaStatsController($scope, nbaService) {
+    module.controller('nbaStatsController', function nbaStatsController($scope, nbaService, $filter) {
     
         //var nba = require('nba');
         $scope.searchText = {};
@@ -43,6 +43,16 @@ $(document).ready(function() {
                 {year: "2008-09"}, {year: "2007-08"}, {year: "2006-07"}, {year: "2005-06"},
                 {year: "2004-05"}, {year: "2003-04"}, {year: "2002-03"}, {year: "2001-02"},
                 {year: "2000-01"}, {year: "1999-00"}
+            ]
+        };
+        $scope.teams = {
+            singleSelect: "",
+            options: [
+                {team: "ALL TEAMS"},
+                {team: "ATL"}, {team: "BKN"}, {team: "BOS"}, {team: "CHA"}, {team: "CHI"}, {team: "CLE"}, {team: "DAL"}, {team: "DEN"}, {team: "DET"}, {team: "GSW"}, {team: "HOU"}, {team: "IND"},
+                {team: "LAC"}, {team: "LAL"}, {team: "MEM"}, {team: "MIA"}, {team: "MIL"}, {team: "MIN"},
+                {team: "NOP"}, {team: "NYK"}, {team: "OKC"}, {team: "ORL"}, {team: "PHI"}, {team: "PHX"},
+                {team: "POR"}, {team: "SAC"}, {team: "SAS"}, {team: "TOR"}, {team: "UTA"}, {team: "WAS"}
             ]
         };
         $scope.seasonType = {
@@ -62,13 +72,15 @@ $(document).ready(function() {
         $scope.selectedPlayer2 = {};
         
         var allPlayers;
-        var allPlayoffPlayers;
+        var allPlayersTeamFiltered;
+        
+        
 
         $scope.getPlayerData = function(season, seasonType) {
             nbaService.getPlayerList(season, seasonType).then(function(playerList) {
                 allPlayers = playerList.leagueDashPlayerStats;
-                getTop5();
-                $scope.playerList = allPlayers.sort(sortBy("pts"));
+                $scope.setTeam();
+                $scope.playerList = $filter('orderBy')($scope.playerList, "pts", true);
                 $scope.pagination.totalItems = $scope.playerList.length;
                 $("#spinner").hide();
                 console.log($scope.playerList);
@@ -78,17 +90,18 @@ $(document).ready(function() {
         $scope.getPlayerData("2016-17", "Regular Season");
         
         // TODO filter players with less than x games (primarily for fg%, also add 3p and ft %s)
-        function getTop5() {
-            $scope.top5Pts = allPlayers.sort(sortBy("pts")).slice(0,5);
-            $scope.top5Reb = allPlayers.sort(sortBy("reb")).slice(0,5);
-            $scope.top5Ast = allPlayers.sort(sortBy("ast")).slice(0,5);
-            $scope.top5Stl = allPlayers.sort(sortBy("stl")).slice(0,5);
-            $scope.top5Blk = allPlayers.sort(sortBy("blk")).slice(0,5);
-            $scope.top5fgPct = allPlayers.sort(sortBy("fgPct")).slice(0,5);
+        $scope.getTop5 = function() {
+            $scope.top5Pts = $filter('orderBy')($scope.playerList, "pts", true).slice(0,5);
+            $scope.top5Reb = $filter('orderBy')($scope.playerList, "reb", true).slice(0,5);
+            $scope.top5Ast = $filter('orderBy')($scope.playerList, "ast", true).slice(0,5);
+            $scope.top5Stl = $filter('orderBy')($scope.playerList, "stl", true).slice(0,5);
+            $scope.top5Blk = $filter('orderBy')($scope.playerList, "blk", true).slice(0,5);
+            $scope.top5fgPct = $filter('orderBy')($scope.playerList, "fgPct", true).slice(0,5);
         };
         
         $scope.allPlayers = function() {
-            $scope.playerList = allPlayers.sort(sortBy("pts"));
+            //$scope.teams.singleSelect = "ALL TEAMS";
+            $scope.playerList = $filter('orderBy')(playersTeamFiltered, "pts", true);
         };
         
         $scope.setPage = function(pageNo) {
@@ -100,7 +113,20 @@ $(document).ready(function() {
             $scope.getPlayerData($scope.season.singleSelect, $scope.seasonType.singleSelect);
         };
         
-        $scope.search = function(num) {
+        $scope.setTeam = function() {
+            if ($scope.teams.singleSelect == "ALL TEAMS") {
+                $scope.playerList = allPlayers;
+                playersTeamFiltered = allPlayers;
+            }
+            else {
+                $scope.playerList = $filter('filter')(allPlayers, {teamAbbreviation: $scope.teams.singleSelect});
+                playersTeamFiltered = $scope.playerList;
+            }
+            $scope.playerList = $filter('orderBy')($scope.playerList, "pts", true)
+            $scope.getTop5();
+        };
+        
+        /*$scope.search = function(num) {
             var compare;
             if (num == 0) {compare = $scope.searchText.text;}
             if (num == 1) {compare = $scope.compare1.text;}
@@ -114,20 +140,54 @@ $(document).ready(function() {
             $scope.playerList = $scope.searchResult;
             $scope.searchText.text = "";
             return $scope.playerList;
-        };
+        };*/
+        
+        $scope.search = function(num) {
+            var compare;
+            if (num == 0) {compare = $scope.searchText.text;}
+            if (num == 1) {compare = $scope.compare1.text;}
+            if (num == 2) {compare = $scope.compare2.text;}
+            $scope.playerList = $filter('filter')(allPlayers, compare);
+            $scope.searchText.text = "";
+            return $scope.playerList;
+        }
         
 
-        // TODO tie breakers
-        $scope.sort = function(stat) {
+        /*$scope.sort = function(stat) {
             $scope.playerList = allPlayers;
             $scope.playerList.sort(sortBy(stat));
+        };*/
+        
+        function sortBy(stat) {
+            return function(x, y) {
+                return y[stat] - x[stat];
+            }
         };
+        
+        $scope.sort = function(stat) {
+            $scope.playerList = $filter('orderBy')($scope.playerList, stat, true);
+        }
+        
+        $scope.effectiveFieldGoal = function(player) {
+            var efg = (player.fgm + (0.5 * player.fG3M)) / player.fga;
+            return Math.round(efg * 100) / 100;
+        }
+        
+        $scope.trueShooting = function(player) {
+            var tsa = player.fga + 0.44 * player.fta;
+            var ts = player.pts / (2 * tsa);
+            return Math.round(ts * 1000) / 1000;
+        }
         
         // selectedPlayer not updating in cntl so pass player from view instead
         $scope.updateData = function(player, num) {
             if (player != undefined) {
                 $scope.data[num] = [player.pts, player.reb, player.ast, player.stl, player.blk, player.tov];
                 $scope.data2[num] = [player.fgPct, player.fg3Pct, player.ftPct];
+            }
+            else {
+                $scope.data[num] = [0, 0, 0, 0, 0, 0];
+                $scope.data2[num] = [0, 0, 0];
             }
         }
         
@@ -142,14 +202,8 @@ $(document).ready(function() {
         });//playerInfo("203112");*/
         
         
-        function sortBy(stat) {
-            return function(x, y) {
-                return y[stat] - x[stat];
-            }
-        };
-        
-        $scope.colors = [{backgroundColor:'rgba(255, 99, 132, 0.4)'},
-                         {backgroundColor:'rgba(54, 162, 235, 0.4)'}];
+        $scope.colors = [{backgroundColor:'rgba(255, 99, 132, 0.3)'},
+                         {backgroundColor:'rgba(54, 162, 235, 0.3)'}];
         
         $scope.labels = ["Points", "Rebounds", "Assists", "Steals", "Blocks", "Turnovers"];
         $scope.labels2 = ["Field Goal", "3 Point", "Free Throw"];
@@ -200,11 +254,17 @@ $(document).ready(function() {
             }
           });
         }
-            
   
   
     });
     // end of controller
+    
+    module.filter('startFrom', function() {
+    return function(input, start) {
+        start = +start; //parse to int
+        return input.slice(start);
+    }
+});
     
         module.factory('nbaService', function($q) {
            var nba = require('nba');
