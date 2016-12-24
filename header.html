@@ -17,6 +17,10 @@
         Player Comparison
     </a>
     
+    <a class="btn btn-default" role="button" href="#advanced" aria-expanded="false" aria-controls="collapseExample" ng-click="calculatePER()">
+        Advanced Stats
+    </a>
+    
     <select ng-init="season.singleSelect = season.options[0].year" ng-model="season.singleSelect" ng-change="changeSeason()">
         <option ng-repeat="option in season.options" value="{{option.year}}">{{option.year}}</option>
     </select>
