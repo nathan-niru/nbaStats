@@ -16,19 +16,19 @@
                 <th>Name</th>
                 <th>Games <span ng-click="sort('gp')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
                 <th>PER <span ng-click="sort('PER')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Effective Shooting % <span ng-click="sort('reb')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>True Shooting % <span ng-click="sort('ast')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Effective FG % <span ng-click="sort('efg')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>True Shooting % <span ng-click="sort('ts')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="player in playerList.slice(((pagination.currentPage-1)*pagination.itemsPerPage), ((pagination.currentPage)*pagination.itemsPerPage)) | filter">
+            <tr ng-repeat="player in playerList.slice(((pagination.currentPage-1)*pagination.itemsPerPage), ((pagination.currentPage)*pagination.itemsPerPage))">
                 <td>
                     <img  style="width:85px" class="displayed" src="http://stats.nba.com/media/players/132x132/{{player.playerId}}.png">
                     {{player.playerName}} ({{player.teamAbbreviation}})</td>
                 <td>{{player.gp}}</td>
                 <td>{{player.PER}}</td>
-                <td>{{player.reb}}</td>
-                <td>{{player.ast}}</td>
+                <td>{{player.efg}}</td>
+                <td>{{player.ts}}</td>
             </tr>
         </tbody>
     </table>

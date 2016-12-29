@@ -6,19 +6,19 @@
     </ul> -->
     
     <a class="btn btn-default" role="button" href="#/" aria-expanded="false" aria-controls="collapseExample" ng-click="allPlayers()"> 
-        Player List
+        Basic Stats
+    </a>
+    
+    <a class="btn btn-default" role="button" href="#advanced" aria-expanded="false" aria-controls="collapseExample" ng-click="calculateAdvanced()">
+        Advanced Stats
     </a>
     
     <a class="btn btn-default" role="button" href="#leaders" aria-expanded="false" aria-controls="collapseExample" ng-click="allPlayers()">
         Leaders
     </a>
 
-    <a class="btn btn-default" role="button" href="#compare" aria-expanded="false" aria-controls="collapseExample" ng-click="allPlayers()">
+    <a class="btn btn-default" role="button" href="#compare" aria-expanded="false" aria-controls="collapseExample" ng-click="setAllTeams()">
         Player Comparison
-    </a>
-    
-    <a class="btn btn-default" role="button" href="#advanced" aria-expanded="false" aria-controls="collapseExample" ng-click="calculatePER()">
-        Advanced Stats
     </a>
     
     <select ng-init="season.singleSelect = season.options[0].year" ng-model="season.singleSelect" ng-change="changeSeason()">

@@ -31,7 +31,7 @@ $(document).ready(function() {
         });
     });
     
-    module.controller('nbaStatsController', function nbaStatsController($scope, nbaService, $filter) {
+    module.controller('nbaStatsController', function nbaStatsController($scope, nbaService, $filter, $route) {
     
         //var nba = require('nba');
         $scope.searchText = {};
@@ -89,6 +89,9 @@ $(document).ready(function() {
                 allPlayers = playerList.leagueDashPlayerStats;
                 $scope.setTeam();
                 $scope.playerList = $filter('orderBy')($scope.playerList, "pts", true);
+                if ($route.current.loadedTemplateUrl == "advanced.html") {
+                    $scope.calculateAdvanced();
+                }
                 $scope.pagination.totalItems = $scope.playerList.length;
                 $("#spinner").hide();
                 console.log($scope.playerList);
@@ -119,27 +122,31 @@ $(document).ready(function() {
             }
             
             var teamInfo;
-            for (i=0; i<allPlayersTotals.length; i++) {
-                leagueTotals.set("lgPTS", leagueTotals.get("lgPTS")+allPlayersTotals[i].pts);
-                leagueTotals.set("lgAST", leagueTotals.get("lgAST")+allPlayersTotals[i].ast);
-                leagueTotals.set("lgORB", leagueTotals.get("lgORB")+allPlayersTotals[i].oreb);
-                leagueTotals.set("lgTRB", leagueTotals.get("lgTRB")+allPlayersTotals[i].reb);
-                leagueTotals.set("lgTO", leagueTotals.get("lgTO")+allPlayersTotals[i].tov);
-                leagueTotals.set("lgFGA", leagueTotals.get("lgFGA")+allPlayersTotals[i].fga);
-                leagueTotals.set("lgFG", leagueTotals.get("lgFG")+allPlayersTotals[i].fgm);
-                leagueTotals.set("lgFTA", leagueTotals.get("lgFTA")+allPlayersTotals[i].fta);
-                leagueTotals.set("lgFT", leagueTotals.get("lgFT")+allPlayersTotals[i].ftm);
-                leagueTotals.set("lgPF", leagueTotals.get("lgPF")+allPlayersTotals[i].pf);
-                leagueTotals.set("lgMP", leagueTotals.get("lgMP")+allPlayersTotals[i].min);
+            for (i=0; i<allPlayers.length; i++) {
+                leagueTotals.set("lgPTS", leagueTotals.get("lgPTS")+allPlayers[i].pts);
+                leagueTotals.set("lgAST", leagueTotals.get("lgAST")+allPlayers[i].ast);
+                leagueTotals.set("lgORB", leagueTotals.get("lgORB")+allPlayers[i].oreb);
+                leagueTotals.set("lgTRB", leagueTotals.get("lgTRB")+allPlayers[i].reb);
+                leagueTotals.set("lgTO", leagueTotals.get("lgTO")+allPlayers[i].tov);
+                leagueTotals.set("lgFGA", leagueTotals.get("lgFGA")+allPlayers[i].fga);
+                leagueTotals.set("lgFG", leagueTotals.get("lgFG")+allPlayers[i].fgm);
+                leagueTotals.set("lgFTA", leagueTotals.get("lgFTA")+allPlayers[i].fta);
+                leagueTotals.set("lgFT", leagueTotals.get("lgFT")+allPlayers[i].ftm);
+                leagueTotals.set("lgPF", leagueTotals.get("lgPF")+allPlayers[i].pf);
+                leagueTotals.set("lgMP", leagueTotals.get("lgMP")+allPlayers[i].min);
                 
-                teamInfo = teamTotals.get(allPlayersTotals[i].teamAbbreviation);
-                teamInfo.tmAST += allPlayersTotals[i].ast;
-                teamInfo.tmFG += allPlayersTotals[i].fgm;
-                teamInfo.tmFGA += allPlayersTotals[i].fga;
-                teamInfo.tmFTA += allPlayersTotals[i].fta;
-                teamInfo.tmORB += allPlayersTotals[i].oreb;
-                teamInfo.tmTOV += allPlayersTotals[i].tov;
-                teamInfo.tmMP += allPlayersTotals[i].min;
+                teamInfo = teamTotals.get(allPlayers[i].teamAbbreviation);
+                if (teamInfo == undefined) {
+                    teamTotals.set(allPlayers[i].teamAbbreviation, {tmAST: 0, tmFG: 0, tmFGA: 0, tmFTA: 0, tmORB: 0, tmTOV: 0, tmMP: 0});
+                    teamInfo = teamTotals.get(allPlayers[i].teamAbbreviation)
+                }
+                teamInfo.tmAST += allPlayers[i].ast;
+                teamInfo.tmFG += allPlayers[i].fgm;
+                teamInfo.tmFGA += allPlayers[i].fga;
+                teamInfo.tmFTA += allPlayers[i].fta;
+                teamInfo.tmORB += allPlayers[i].oreb;
+                teamInfo.tmTOV += allPlayers[i].tov;
+                teamInfo.tmMP += allPlayers[i].min;
             }
             
             factor = 2/3 - ((0.5 * leagueTotals.get("lgAST")/leagueTotals.get("lgFG")) / (2 * leagueTotals.get("lgFG")/leagueTotals.get("lgFT")));
@@ -149,40 +156,41 @@ $(document).ready(function() {
             DRBP = (leagueTotals.get("lgTRB") - leagueTotals.get("lgORB")) / leagueTotals.get("lgTRB");
             
             var tmPOSS;
-            for (i=1;i<=30;i++) {
-                teamInfo = teamTotals.get($scope.teams.options[i].team);
+            for (var key of teamTotals.keys()) {
+                teamInfo = teamTotals.get(key);
                 //tmPOSS = teamInfo.tmFGA + 0.4 * teamInfo.tmFTA - 1.07 * (teamInfo.tmFGA - teamInfo.tmFG) + teamInfo.tmTOV;
                 tmPOSS = 0.96 * (teamInfo.tmFGA + teamInfo.tmTOV + 0.44 * teamInfo.tmFTA - teamInfo.tmORB);
                 teamInfo.tmPace = 48 * (tmPOSS/ (teamInfo.tmMP / 5));
+                //teamInfo.tmPace = (240/(teamInfo.tmMP))*tmPOSS
             }
             
             //var lgPOSS = leagueTotals.get("lgFGA") + 0.4 * leagueTotals.get("lgFTA") - 1.07 * (leagueTotals.get("lgFGA") - leagueTotals.get("lgFG")) + leagueTotals.get("lgTO");
             var lgPOSS = 0.96 * (leagueTotals.get("lgFGA") + leagueTotals.get("lgTO") + 0.44 * leagueTotals.get("lgFTA") - leagueTotals.get("lgORB"))
             leagueTotals.set("lgPace", 48 * (lgPOSS / (leagueTotals.get("lgMP") / 5)));
+            
         };
         
-        $scope.calculatePER = function() {
-            
-            nbaService.getPlayerList($scope.season.singleSelect, $scope.seasonType.singleSelect, "Totals").then(function(playerList) {
-                allPlayersTotals = playerList.leagueDashPlayerStats;
-                allPlayersTotals = $filter('orderBy')(allPlayersTotals, "pts", true);
-                calculateTotals();
-                var player;
-                var uPER;
-                var lgFT = leagueTotals.get("lgFT");
-                var lgPF = leagueTotals.get("lgPF");
-                var lgFTA = leagueTotals.get("lgFTA");
-                for (i=0; i<allPlayersTotals.length; i++) {
-                    player = allPlayersTotals[i];
-                    team = teamTotals.get(player.teamAbbreviation);
-                    uPER = (1/player.min) * (player.fG3M + ((2/3) * player.ast) + ((2 - factor * (team.tmAST/team.tmFG)) * player.fgm) + (0.5 * player.ftm * (2 - (1/3) * (team.tmAST/team.tmFG))) - (VOP * player.tov) - (VOP * DRBP * (player.fga - player.fgm)) - (VOP * 0.44 * (0.44 + (0.56 * DRBP)) * (player.fta - player.ftm)) + (VOP * (1 - DRBP) * (player.reb - player.oreb)) + (VOP * DRBP * player.oreb) + (VOP * player.stl) + (VOP * DRBP * player.blk) - (player.pf * ((lgFT/lgPF) - 0.44 * (lgFTA/lgPF) * VOP)));
+        $scope.calculateAdvanced = function() {
+            $scope.advanced = true;
+            calculateTotals();
+            var player;
+            var uPER;
+            var lgFT = leagueTotals.get("lgFT");
+            var lgPF = leagueTotals.get("lgPF");
+            var lgFTA = leagueTotals.get("lgFTA");
+            for (i=0; i<allPlayers.length; i++) {
+                player = allPlayers[i];
+                team = teamTotals.get(player.teamAbbreviation);
+                uPER = (1/player.min) * (player.fG3M + ((2/3) * player.ast) + ((2 - factor * (team.tmAST/team.tmFG)) * player.fgm) + (0.5 * player.ftm * (1 + (1 - (team.tmAST/team.tmFG)) + (2/3) * (team.tmAST/team.tmFG))) - (VOP * player.tov) - (VOP * DRBP * (player.fga - player.fgm)) - (VOP * 0.44 * (0.44 + (0.56 * DRBP)) * (player.fta - player.ftm)) + (VOP * (1 - DRBP) * (player.reb - player.oreb)) + (VOP * DRBP * player.oreb) + (VOP * player.stl) + (VOP * DRBP * player.blk) - (player.pf * ((lgFT/lgPF) - 0.44 * (lgFTA/lgPF) * VOP)));
                     
-                    player.PER = (uPER * (leagueTotals.get("lgPace")/team.tmPace)) * (15/0.3);
-                    player.PER = Math.round(player.PER * 10)/10;
-                }
-                $scope.playerList = allPlayersTotals;
-                //console.log(allPlayersTotals);
-            });
+                player.PER = (uPER * (leagueTotals.get("lgPace")/team.tmPace)) * (15/0.3);
+                allPlayers[i].PER = Math.round(player.PER * 10)/10;
+                    
+                effectiveFieldGoal(allPlayers[i]);
+                trueShooting(allPlayers[i]);
+            }
+            $scope.playerList = $filter('orderBy')(allPlayers, "pts", true);
+            $scope.pagination.totalItems = $scope.playerList.length;
         }
         
         // TODO filter players with less than x games (primarily for fg%, also add 3p and ft %s)
@@ -199,6 +207,11 @@ $(document).ready(function() {
             //$scope.teams.singleSelect = "ALL TEAMS";
             $scope.playerList = $filter('orderBy')(playersTeamFiltered, "pts", true);
             $scope.pagination.totalItems = $scope.playerList.length;
+        };
+        
+        $scope.setAllTeams = function() {
+            $scope.teams.singleSelect = "ALL TEAMS";
+            $scope.setTeam();
         };
         
         $scope.setPage = function(pageNo) {
@@ -245,7 +258,7 @@ $(document).ready(function() {
             if (num == 0) {compare = $scope.searchText.text;}
             if (num == 1) {compare = $scope.compare1.text;}
             if (num == 2) {compare = $scope.compare2.text;}
-            $scope.playerList = $filter('filter')(allPlayers, {playerName: compare});
+            $scope.playerList = $filter('filter')(playersTeamFiltered, {playerName: compare});
             $scope.pagination.totalItems = $scope.playerList.length;
             $scope.searchText.text = "";
             return $scope.playerList;
@@ -267,15 +280,15 @@ $(document).ready(function() {
             $scope.playerList = $filter('orderBy')($scope.playerList, stat, true);
         }
         
-        $scope.effectiveFieldGoal = function(player) {
+        function effectiveFieldGoal(player) {
             var efg = (player.fgm + (0.5 * player.fG3M)) / player.fga;
-            return Math.round(efg * 100) / 100;
+            player.efg = Math.round(efg * 100) / 100;
         }
         
-        $scope.trueShooting = function(player) {
+        function trueShooting(player) {
             var tsa = player.fga + 0.44 * player.fta;
             var ts = player.pts / (2 * tsa);
-            return Math.round(ts * 1000) / 1000;
+            player.ts = Math.round(ts * 1000) / 1000;
         }
         
         // selectedPlayer not updating in cntl so pass player from view instead
