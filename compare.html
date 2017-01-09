@@ -1,4 +1,7 @@
-<br/>
+<div ng-controller="compareController">
+    <div header ng-controller="headerController"></div>
+    
+    <br/>
 
     <div class="col-md-4">
     <md-autocomplete md-selected-item="selectedPlayer1.player" md-search-text="compare1.text" md-items="player in search(1)" md-item-text="player.playerName" md-selected-item-change="updateData(player, 0)" style="background-color: rgba(255, 99, 132, 0.3)">
@@ -33,3 +36,5 @@
         <canvas class="chart chart-horizontalBar" chart-data="data2" chart-labels="labels2" chart-options="options" chart-series="series" chart-colors="colors"></canvas> 
 
     </div>
+    
+</div>

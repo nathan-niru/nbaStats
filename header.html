@@ -9,31 +9,31 @@
         Basic Stats
     </a>
     
-    <a class="btn btn-default" role="button" href="#advanced" aria-expanded="false" aria-controls="collapseExample" ng-click="calculateAdvanced()">
+    <a class="btn btn-default" role="button" href="#advanced" aria-expanded="false" aria-controls="collapseExample">
         Advanced Stats
     </a>
     
-    <a class="btn btn-default" role="button" href="#leaders" aria-expanded="false" aria-controls="collapseExample" ng-click="allPlayers()">
+    <a class="btn btn-default" role="button" href="#leaders" aria-expanded="false" aria-controls="collapseExample">
         Leaders
     </a>
 
-    <a class="btn btn-default" role="button" href="#compare" aria-expanded="false" aria-controls="collapseExample" ng-click="setAllTeams()">
+    <a class="btn btn-default" role="button" href="#compare" aria-expanded="false" aria-controls="collapseExample">
         Player Comparison
     </a>
     
-    <select ng-init="season.singleSelect = season.options[0].year" ng-model="season.singleSelect" ng-change="changeSeason()">
+    <select ng-model="season.singleSelect" ng-change="changeSeason()">
         <option ng-repeat="option in season.options" value="{{option.year}}">{{option.year}}</option>
     </select>
     
-    <select ng-init="seasonType.singleSelect = seasonType.options[0].type" ng-model="seasonType.singleSelect" ng-change="changeSeason()">
+    <select ng-model="seasonType.singleSelect" ng-change="changeSeason()">
         <option ng-repeat="option in seasonType.options" value="{{option.type}}">{{option.type}}</option>
     </select>
     
-    <select ng-init="teams.singleSelect = teams.options[0].team" ng-model="teams.singleSelect" ng-change="setTeam()">
+    <select ng-model="teams.singleSelect" ng-change="setTeam()">
         <option ng-repeat="option in teams.options" value="{{option.team}}">{{option.team}}</option>
     </select>
     
     <i id="spinner" class="fa fa-refresh fa-spin" style="font-size:24px; display:none"></i>
-
+    
 
 </div>
