@@ -147,30 +147,6 @@ $(document).ready(function() {
         $scope.sort = function(stat) {
             $scope.playerList = $filter('orderBy')($scope.playerList, stat, true);
         }
-        
-        // move this to service
-        $scope.winShares = function(player) {
-            var team = teamTotals.get(player.teamAbbreviation);
-            var offPoss = 0.96 * (player.fga + player.tov + 0.44 * player.fta - player.oreb);
-            var qAst = ((player.min / (team.tmMP / 5)) * (1.14 * ((team.tmAST - player.ast) / player.fgm))) + ((((team.tmAST / team.tmMP) * player.min * 5 - player.ast) / ((team.tmFG / team.tmMP) * player.min * 5 - player.fgm)) * (1 - (player.min / (team.tmMP / 5))));
-            var teamScoringPoss = team.tmFG + (1 - Math.pow((1 - (team.tmFT / team.tmFTA)), 2)) * team.tmFTA * 0.4;       
-            var teamPlayPct = teamScoringPoss / (team.tmFGA + team.tmFTA * 0.4 + team.tmTOV);
-            var teamORBPct = team.tmORB / (team.tmORB + team.tmDRB);
-            var teamORBWeight = ((1 - teamORBPct) * teamPlayPct) / ((1 - teamORBPct) * teamPlayPct + teamORBPct * (1 - teamPlayPct));
-            
-            var ptsProducedFG = 2 * (player.fgm + 0.5 * player.fG3M) * (1 - 0.5 * ((player.pts - player.ftm) / (2 * player.fga)) * qAst);
-            var ptsProducedAST = 2 * ((team.tmFG - player.fgm + 0.5 * (team.tm3PM - player.fG3M)) / (team.tmFG - player.fgm)) * 0.5 * (((team.tmPTS - team.tmFT) - (player.pts - player.ftm)) / (2 * (team.tmFGA - player.fga))) * player.ast;
-            var ptsProducedORB = player.oreb * teamORBWeight * teamPlayPct * (team.tmPTS / (team.tmFG + (1 - Math.pow((1 - (team.tmFT / team.tmFTA)), 2)) * 0.4 * team.tmFTA));
-            
-            var ptsProd = (ptsProducedFG + ptsProducedAST + player.ftm) * (1 - (team.tmORB / teamScoringPoss) * teamORBWeight * teamPlayPct) + ptsProducedORB;
-            console.log(ptsProducedFG + " | " + ptsProducedAST + " | " + ptsProducedORB + " | " + teamPlayPct);
-            console.log(ptsProd * player.gp);
-                                                                           
-            var marginalOff = (ptsProd * player.gp) - 0.92 * (leagueTotals.get("lgPTS")/leagueTotals.get("lgPOSS")) * (offPoss * player.gp);
-            var marginalPtsPerWin = 0.32 * 100 * (teamTotals.get(player.teamAbbreviation).tmPace / leagueTotals.get("lgPace"));
-            var oWinShares = marginalOff / marginalPtsPerWin;
-            console.log(marginalOff + " | " + marginalPtsPerWin + " | " + oWinShares);
-        }
   
   
     });
@@ -330,12 +306,6 @@ $(document).ready(function() {
             totalItems: 0
         };
         
-        var leagueTotals = new Map();
-        var teamTotals = new Map();
-        var factor;
-        var VOP;
-        var DRBP;
-        
         
         // retrieve data
         function getPlayerData(season, seasonType) {
@@ -378,7 +348,11 @@ $(document).ready(function() {
         
         $scope.sort = function(stat) {
             $scope.playerList = $filter('orderBy')($scope.playerList, stat, true);
-        }
+        };
+        
+        $scope.winShares = function(player) {
+            nbaService.boxPlusMinus(player);
+        };
         
         
     });
@@ -578,8 +552,82 @@ $(document).ready(function() {
                     nbaService.blockPercentage(player, team);
                     nbaService.stealPercentage(player, team);
                     nbaService.usagePercentage(player, team);
+                    nbaService.offensiveRating(player, team);
+                    nbaService.boxPlusMinus(player, team);
+                    
                 }
-            }
+            },
+            
+            // TODO add team adjustment for bpm and team games for vorp
+            boxPlusMinus : function(player, team) {
+                var tovPct = 100 * (player.tov * (team.tmMP / 5)) / (player.min * nbaService.leagueTotals.get("lgPOSS")/30);
+                var oRebPct = 100 * (player.oreb * (team.tmMP / 5)) / (player.min * (team.tmORB+nbaService.leagueTotals.get("lgORB")/30));
+                var dRebPct = 100 * (player.dreb * (team.tmMP / 5)) / (player.min * (team.tmDRB+((nbaService.leagueTotals.get("lgTRB")-nbaService.leagueTotals.get("lgORB"))/30)));
+                var teamTsa = team.tmFGA + 0.44 * team.tmFTA;
+                var teamTS = team.tmPTS / (2 * teamTsa);
+                
+                var regMPG = (player.min*player.gp)/(player.gp + 4);
+                var rawBPM = (0.123391*regMPG) * (0.119597*oRebPct) + (-0.151287*dRebPct) + (1.255644*player.stlPct) + (0.531838*player.blkPct) + (-0.305868*player.astPct) - (0.921292 * player.usgPct * tovPct/100) + 0.711217 * player.usgPct * (1 - tovPct/100) * (2 * (player.ts - teamTS) + 0.017022*player.astPct + 0.297639*((player.fG3A/player.fga) - (nbaService.leagueTotals.get("lg3PA")/nbaService.leagueTotals.get("lgFGA"))) - 0.213485) + 0.725930*Math.sqrt(player.astPct + player.rebPct);
+                
+                
+                player.bpm = Math.round(rawBPM * 10)/10;
+                
+                var vorp = (rawBPM - (-2.0)) * (player.min/48) * (player.gp/82);
+                player.vorp = Math.round(vorp * 10)/10;
+                
+                //console.log(rawBPM);
+            },
+            
+            // currently using simplified calculations of pts produced and possessions; need to fix
+            offensiveRating : function(player, team) {
+                var offPoss = 0.96 * (player.fga + player.tov + 0.44 * player.fta - player.oreb);
+                var ptsProdShort = ((1.45 * player.fgm) + (2.2 * player.fG3M) + player.ftm + (0.6 * player.oreb) + (0.6 * player.ast));
+                var oRtg = 100 * (ptsProdShort / offPoss);
+                player.oRtg = Math.round(oRtg * 10)/10;
+                
+                var marginalOff = (ptsProdShort * player.gp) - 0.92 * (this.leagueTotals.get("lgPTS")/this.leagueTotals.get("lgPOSS")) * (offPoss * player.gp);
+                var marginalPtsPerWin = 0.32 * 100 * (this.teamTotals.get(player.teamAbbreviation).tmPace / this.leagueTotals.get("lgPace"));
+                player.oWinShares = marginalOff / marginalPtsPerWin;
+            },
+            
+            winShares : function(player) {
+                var team = this.teamTotals.get(player.teamAbbreviation);
+                var offPoss = 0.96 * (player.fga + player.tov + 0.44 * player.fta - player.oreb);
+                var ptsProdShort = ((1.45 * player.fgm) + (2.2 * player.fG3M) + player.ftm + (0.6 * player.oreb) + (0.6 * player.ast));
+                console.log(ptsProdShort + " | " + offPoss + " || " + (100 * (ptsProdShort / offPoss)));
+                
+                
+                var qAst = ((player.min / (team.tmMP / 5)) * (1.14 * ((team.tmAST - player.ast) / player.fgm))) + ((((team.tmAST / team.tmMP) * player.min * 5 - player.ast) / ((team.tmFG / team.tmMP) * player.min * 5 - player.fgm)) * (1 - (player.min / (team.tmMP / 5))));
+                var teamScoringPoss = team.tmFG + (1 - Math.pow((1 - (team.tmFT / team.tmFTA)), 2)) * team.tmFTA * 0.4; 
+                
+                var teamPlayPct = teamScoringPoss / (team.tmFGA + team.tmFTA * 0.4 + team.tmTOV);
+                var teamORBPct = team.tmORB / (team.tmORB + ((this.leagueTotals.get("lgTRB") - this.leagueTotals.get("lgORB"))/30));
+                var teamORBWeight = ((1 - teamORBPct) * teamPlayPct) / ((1 - teamORBPct) * teamPlayPct + teamORBPct * (1 - teamPlayPct));
+
+                var ptsProducedFG = 2 * (player.fgm + 0.5 * player.fG3M) * (1 - 0.5 * ((player.pts - player.ftm) / (2 * player.fga)) * qAst);
+                var ptsProducedAST = 2 * ((team.tmFG - player.fgm + 0.5 * (team.tm3PM - player.fG3M)) / (team.tmFG - player.fgm)) * 0.5 * (((team.tmPTS - team.tmFT) - (player.pts - player.ftm)) / (2 * (team.tmFGA - player.fga))) * player.ast;
+                var ptsProducedORB = player.oreb * teamORBWeight * teamPlayPct * (team.tmPTS / (team.tmFG + (1 - Math.pow((1 - (team.tmFT / team.tmFTA)), 2)) * 0.4 * team.tmFTA));
+
+                var ptsProd = (ptsProducedFG + ptsProducedAST + player.ftm) * (1 - (team.tmORB / teamScoringPoss) * teamORBWeight * teamPlayPct) + ptsProducedORB;
+                
+                var fgPart = player.fgm * (1 - 0.5 * ((player.pts - player.ftm) / (2 * player.fga)) * qAst);
+                var astPart = 0.5 * (((team.tmPTS - team.tmFT) - (player.pts - player.ftm)) / (2 * (team.tmFGA - player.fga))) * player.ast;
+                var ftPart = (1 - Math.pow((1 - (player.ftm/player.fta)), 2)) * 0.4 * player.fta;
+                var orbPart = player.oreb * teamORBWeight * teamPlayPct;
+                var scPoss = (fgPart + astPart + ftPart) * (1 - (team.tmORB / teamScoringPoss) * teamORBWeight * teamPlayPct) + orbPart;
+                var fgxPoss = (player.fga - player.fgm) * (1 - 1.07 * teamORBPct);
+                var ftxPoss = (Math.pow((1 - (player.ftm / player.fta)), 2)) * 0.4 * player.fta;
+                var totPoss = scPoss + fgxPoss + ftxPoss + player.tov;
+                
+                console.log(ptsProducedFG + " | " + ptsProducedAST + " | " + ptsProducedORB + " | " + teamPlayPct);
+                console.log(ptsProd + " : " + totPoss + " :: " + 100 * (ptsProd/totPoss));
+                
+
+                var marginalOff = (ptsProdShort * player.gp) - 0.92 * (this.leagueTotals.get("lgPTS")/this.leagueTotals.get("lgPOSS")) * (offPoss * player.gp);
+                var marginalPtsPerWin = 0.32 * 100 * (this.teamTotals.get(player.teamAbbreviation).tmPace / this.leagueTotals.get("lgPace"));
+                var oWinShares = marginalOff / marginalPtsPerWin;
+                console.log(marginalOff + " | " + marginalPtsPerWin + " | " + oWinShares);
+        }
                 
             
         };

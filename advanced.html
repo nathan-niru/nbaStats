@@ -26,6 +26,9 @@
                 <th>Steal % <span ng-click="sort('blkPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
                 <th>Block % <span ng-click="sort('blkPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
                 <th>Usage % <span ng-click="sort('usgPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>Offensive Rating <span ng-click="sort('oRtg')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>BPM <span ng-click="sort('oRtg')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th>VORP <span ng-click="sort('oRtg')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
             </tr>
         </thead>
         <tbody style="background-color:white">
@@ -42,7 +45,10 @@
                 <td>{{player.stlPct}}</td>
                 <td>{{player.blkPct}}</td>
                 <td>{{player.usgPct}}</td>
-                <!-- <td><button ng-click="winShares(player)"></button></td> -->
+                <td>{{player.oRtg}}</td>
+                <td>{{player.bpm}}</td>
+                <td>{{player.vorp}}</td>
+                <td><button ng-click="winShares(player)"></button></td>
             </tr>
         </tbody>
     </table>
