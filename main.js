@@ -15,7 +15,7 @@ $(document).ready(function() {
         }
     });
     
-    module.controller('headerController', function headerController($scope, $rootScope, nbaService, $filter) {
+    module.controller('headerController', function headerController($scope, nbaService, $filter) {
         $scope.season = {
             singleSelect: nbaService.season,
             options: [
@@ -63,6 +63,7 @@ $(document).ready(function() {
             }
             nbaService.team = $scope.teams.singleSelect;
             $scope.$parent.playerList = $filter('orderBy')($scope.$parent.playerList, "pts", true)
+            $(".statHeader").css("color", "black");
         };
         
     });
@@ -116,6 +117,7 @@ $(document).ready(function() {
         }
         else {
             $scope.playerList = $filter('orderBy')(nbaService.playersTeamFiltered, nbaService.sortBy, true);
+            highlightHeader(nbaService.sortBy);
         }
         
         $scope.$watch("playerList", function(newValue, oldValue) {
@@ -124,6 +126,8 @@ $(document).ready(function() {
         
         $scope.allPlayers = function() {
             $scope.playerList = $filter('orderBy')(nbaService.playersTeamFiltered, "pts", true);
+            nbaService.sortBy = "pts";
+            $(".statHeader").css("color", "black");
         };
         
                 
@@ -142,10 +146,17 @@ $(document).ready(function() {
             $scope.pagination.totalItems = $scope.playerList.length;
             $scope.searchText.text = "";
             return $scope.playerList;
-        }
+        };
         
         $scope.sort = function(stat) {
             $scope.playerList = $filter('orderBy')($scope.playerList, stat, true);
+            nbaService.sortBy = stat;
+            highlightHeader(stat);
+        };
+        
+        function highlightHeader(stat) {
+            $(".statHeader").css("color", "black");
+            $("#"+stat).css("color", "red");
         }
   
   
@@ -197,7 +208,6 @@ $(document).ready(function() {
         
         $scope.compare1 = {};
         $scope.compare2 = {};
-        $scope.searchResult = [];
         
         $scope.selectedPlayer1 = {};
         $scope.selectedPlayer2 = {};
@@ -306,6 +316,19 @@ $(document).ready(function() {
             totalItems: 0
         };
         
+        $scope.desc = {
+            PER : "Sums a players positive accomplishements and subtracts the negative accomplishments, and returns a per minute rating of a player's performance.",
+            EFG : "Adjusts Field Goal % for the fact that 3-point field goals are worth one more point that 2-point field goals.",
+            TS : "Measures shooting effeciency while taking into account field goals, 3-point field goals and free throws.",
+            Ast : "Percentage of teammate field goals a player assisted while he was on the floor.",
+            Reb : "Percentage of available rebound a player grabbed while he was on the floor.",
+            Stl : "Percentage of opponent possessions that end with a steal by the player while he was on the floor.",
+            Blk : "Percentage of opponent two-point field goal attempts blocked by the player while he was on the floor.",
+            Usg : "Percentage of team plays used by a player while he was on the floor.",
+            BPM : "Estimate of points per 100 possessions that a player contributed above a league-average player, translated to an average team.",
+            VORP : "Estimate of the points per 100 team possessions that a player contributed above a replacement level (-2.0) player, translated to an average team over a 82 game season. Multiply be 2.70 to convert to wins over replacement."
+        }
+        
         
         // retrieve data
         function getPlayerData(season, seasonType) {
@@ -333,6 +356,7 @@ $(document).ready(function() {
         
         $scope.allPlayers = function() {
             $scope.playerList = $filter('orderBy')(nbaService.playersTeamFiltered, "pts", true);
+            //nbaService.sortBy = "pts";
         };
         
         $scope.setPage = function(pageNo) {
@@ -348,6 +372,17 @@ $(document).ready(function() {
         
         $scope.sort = function(stat) {
             $scope.playerList = $filter('orderBy')($scope.playerList, stat, true);
+            nbaService.sortBy = stat;
+            highlightHeader(stat);
+        };
+        
+        function highlightHeader(stat) {
+            $(".statHeader").css("color", "black");
+            $("#"+stat).css("color", "red");
+        }
+        
+        $scope.toggleDesc = function() {
+            $("#advancedDesc").toggle();
         };
         
         $scope.winShares = function(player) {
@@ -381,6 +416,9 @@ $(document).ready(function() {
             seasonType: "Regular Season",
             team: "ALL TEAMS",
             sortBy: "pts",
+            VOP: undefined,
+            factor: undefined,
+            DRBP: undefined,
             leagueTotals: undefined,
             teamTotals: undefined,
             teamNames: [{team: "ATL"}, {team: "BKN"}, {team: "BOS"}, {team: "CHA"}, {team: "CHI"}, {team: "CLE"}, 
@@ -471,11 +509,11 @@ $(document).ready(function() {
                     teamInfo.tmMP += allPlayers[i].min;
                 }
 
-                factor = 2/3 - ((0.5 * leagueTotals.get("lgAST")/leagueTotals.get("lgFG")) / (2 * leagueTotals.get("lgFG")/leagueTotals.get("lgFT")));
+                nbaService.factor = 2/3 - ((0.5 * leagueTotals.get("lgAST")/leagueTotals.get("lgFG")) / (2 * leagueTotals.get("lgFG")/leagueTotals.get("lgFT")));
 
-                VOP = leagueTotals.get("lgPTS")/((leagueTotals.get("lgFGA") - leagueTotals.get("lgORB") + leagueTotals.get("lgTO") + 0.44 * leagueTotals.get("lgFTA")));
+                nbaService.VOP = leagueTotals.get("lgPTS")/((leagueTotals.get("lgFGA") - leagueTotals.get("lgORB") + leagueTotals.get("lgTO") + 0.44 * leagueTotals.get("lgFTA")));
 
-                DRBP = (leagueTotals.get("lgTRB") - leagueTotals.get("lgORB")) / leagueTotals.get("lgTRB");
+                nbaService.DRBP = (leagueTotals.get("lgTRB") - leagueTotals.get("lgORB")) / leagueTotals.get("lgTRB");
 
                 var tmPOSS;
                 for (var key of teamTotals.keys()) {
@@ -537,6 +575,9 @@ $(document).ready(function() {
                 var lgFT = nbaService.leagueTotals.get("lgFT");
                 var lgPF = nbaService.leagueTotals.get("lgPF");
                 var lgFTA = nbaService.leagueTotals.get("lgFTA");
+                var VOP = nbaService.VOP;
+                var DRBP = nbaService.DRBP;
+                var factor = nbaService.factor;
                 for (i=0; i<nbaService.allPlayers.length; i++) {
                     player = nbaService.allPlayers[i];
                     team = nbaService.teamTotals.get(player.teamAbbreviation);

@@ -1,5 +1,21 @@
 <div ng-controller="advancedController">
-    <div header ng-controller="headerController"></div>
+    <div header ng-controller="headerController"></div><br/>
+    
+    <div>
+        <button id="advancedButton" ng-click="toggleDesc()" type="button" class="btn btn-primary">Descriptions</button>
+        <div id="advancedDesc" class="well" style="display:none">
+        <b>Player Effeciency Rating (PER)</b> : {{desc.PER}}<br/>
+        <b>Effective Field Goal % (EFG%)</b> : {{desc.EFG}}<br/>
+        <b>True Shooting % (TS%)</b> : {{desc.TS}}<br/>
+        <b>Assist %</b> : {{desc.Ast}}<br/>
+        <b>Rebound %</b> : {{desc.Reb}}<br/>
+        <b>Steal %</b> : {{desc.Stl}}<br/>
+        <b>Block %</b> : {{desc.Blk}}<br/>
+        <b>Usage %</b> : {{desc.Usg}}<br/>
+        <b>Box Plus/Minus (BPM)</b> : {{desc.BPM}}<br/>
+        <b>Value Over Replacement Player (VORP)</b> : {{desc.VORP}}<br/>
+        </div>
+    </div>
 
     <form>
         <div class="form-group" style="float:right">
@@ -17,18 +33,38 @@
         <thead>
             <tr class="info">
                 <th>Name</th>
-                <th>Games <span ng-click="sort('gp')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>PER <span ng-click="sort('PER')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Effective FG % <span ng-click="sort('efg')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>True Shooting % <span ng-click="sort('ts')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Assist % <span ng-click="sort('astPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Rebound % <span ng-click="sort('rebPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Steal % <span ng-click="sort('blkPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Block % <span ng-click="sort('blkPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Usage % <span ng-click="sort('usgPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Offensive Rating <span ng-click="sort('oRtg')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>BPM <span ng-click="sort('oRtg')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>VORP <span ng-click="sort('oRtg')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th><span id="gp" class="statHeader" ng-click="sort('gp')">Games</span></th>
+                <th><span id="PER" class="statHeader" ng-click="sort('PER')">PER</span>
+                    <md-tooltip md-direction="top">{{desc.PER}}</md-tooltip>
+                </th>
+                <th><span id="efg" class="statHeader" ng-click="sort('efg')">Effective FG%</span>
+                    <md-tooltip md-direction="top">{{desc.EFG}}</md-tooltip>
+                </th>
+                <th><span id="ts" class="statHeader" ng-click="sort('ts')">True Shooting %</span>
+                    <md-tooltip md-direction="top">{{desc.TS}}</md-tooltip>
+                </th>
+                <th><span id="astPct" class="statHeader" ng-click="sort('astPct')">Assist%</span>
+                    <md-tooltip md-direction="top">{{desc.Ast}}</md-tooltip>
+                </th>
+                <th><span id="rebPct" class="statHeader" ng-click="sort('rebPct')">Rebound%</span>
+                    <md-tooltip md-direction="top">{{desc.Reb}}</md-tooltip>
+                </th>
+                <th><span id="stlPct" class="statHeader" ng-click="sort('stlPct')">Steal%</span>
+                    <md-tooltip md-direction="top">{{desc.Stl}}</md-tooltip>
+                </th>
+                <th><span id="blkPct" class="statHeader" ng-click="sort('blkPct')">Block%</span>
+                    <md-tooltip md-direction="top">{{desc.Blk}}</md-tooltip>
+                </th>
+                <th><span id="usgPct" class="statHeader" ng-click="sort('usgPct')">Usage%</span>
+                    <md-tooltip md-direction="top">{{desc.Usg}}</md-tooltip>
+                </th>
+                <th><span id="BPM" class="statHeader" ng-click="sort('BPM')">BPM</span>
+                    <md-tooltip md-direction="top">{{desc.BPM}}</md-tooltip>
+                </th>
+                <th><span id="VORP" class="statHeader" ng-click="sort('VORP')">VORP</span>
+                    <md-tooltip md-direction="top">{{desc.VORP}}</md-tooltip>
+                </th>
+                <th>Offensive Rating <!--<span ng-click="sort('oRtg')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>--></th>
             </tr>
         </thead>
         <tbody style="background-color:white">
@@ -45,9 +81,9 @@
                 <td>{{player.stlPct}}</td>
                 <td>{{player.blkPct}}</td>
                 <td>{{player.usgPct}}</td>
-                <td>{{player.oRtg}}</td>
                 <td>{{player.bpm}}</td>
                 <td>{{player.vorp}}</td>
+                <td>{{player.oRtg}}</td>
                 <td><button ng-click="winShares(player)"></button></td>
             </tr>
         </tbody>

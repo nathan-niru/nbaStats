@@ -18,17 +18,17 @@
         <thead>
             <tr class="info">
                 <th>Name</th>
-                <th>Games <span ng-click="sort('gp')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Minutes <span ng-click="sort('min')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Points <span ng-click="sort('pts')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Rebounds <span ng-click="sort('reb')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Assists <span ng-click="sort('ast')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Steals <span ng-click="sort('stl')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Blocks <span ng-click="sort('blk')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Turnovers <span ng-click="sort('tov')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Field Goal % <span ng-click="sort('fgPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>3 Point % <span ng-click="sort('fg3Pct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
-                <th>Free Throw % <span ng-click="sort('ftPct')" class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></th>
+                <th><span id="gp" class="statHeader" ng-click="sort('gp')">Games</span></th>
+                <th><span id="min" class="statHeader" ng-click="sort('min')">Minutes</span></th>
+                <th><span id="pts" class="statHeader" ng-click="sort('pts')">Points</span></th>
+                <th><span id="reb" class="statHeader" ng-click="sort('reb')">Rebounds</span></th>
+                <th><span id="ast" class="statHeader" ng-click="sort('ast')">Assists</span></th>
+                <th><span id="stl" class="statHeader" ng-click="sort('stl')">Steals</span></th>
+                <th><span id="blk" class="statHeader" ng-click="sort('blk')">Blocks</span></th>
+                <th><span id="tov" class="statHeader" ng-click="sort('tov')">Turnovers</span></th>
+                <th><span id="fgPct" class="statHeader" ng-click="sort('fgPct')">Field Goal %</span></th>
+                <th><span id="fg3Pct" class="statHeader" ng-click="sort('fg3Pct')">3 Point %</span></th>
+                <th><span id="ftPct" class="statHeader" ng-click="sort('ftPct')">Free Throw %</span></th>
             </tr>
         </thead>
         <tbody style="background-color:white">
