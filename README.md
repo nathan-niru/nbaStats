@@ -1,1 +1,1 @@
-#nbaStats
+Displays nba player stat data utilizing nba stats api. Calculates advanced analytics for players (ex. Player Effeciency Rating) and allows for player comparisons. Project currently a work in progress.
