@@ -10,7 +10,7 @@ $(document).ready(function() {
             restrict: 'A',
             replace: true,
             scope: false,
-            templateUrl: 'header.html',
+            templateUrl: 'templates/header.html',
             controller: 'headerController'
         }
     });
@@ -66,6 +66,12 @@ $(document).ready(function() {
             $(".statHeader").css("color", "black");
         };
         
+        $scope.allPlayers = function() {
+            $scope.$parent.playerList = $filter('orderBy')(nbaService.playersTeamFiltered, "pts", true);
+            nbaService.sortBy = "";
+            $(".statHeader").css("color", "black");
+        };
+        
     });
     
     
@@ -73,16 +79,16 @@ $(document).ready(function() {
     module.config(function($routeProvider) {
         $routeProvider
         .when("/", {
-            templateUrl : "stats.html",
+            templateUrl : "templates/stats.html",
         })
         .when("/leaders", {
-             templateUrl : "leaders.html"
+             templateUrl : "templates/leaders.html"
         })
         .when("/compare", {
-             templateUrl : "compare.html"
+             templateUrl : "templates/compare.html"
         })
         .when("/advanced", {
-             templateUrl : "advanced.html"
+             templateUrl : "templates/advanced.html"
         });
     });
     
@@ -114,6 +120,9 @@ $(document).ready(function() {
         // get current season players if first time on page, otherwise use previous data
         if (nbaService.playersTeamFiltered.length == 0) {
             getPlayerData(nbaService.season, nbaService.seasonType);
+        }
+        else if (nbaService.sortBy == "") {
+            $scope.playerList = $filter('orderBy')(nbaService.playersTeamFiltered, "pts", true);
         }
         else {
             $scope.playerList = $filter('orderBy')(nbaService.playersTeamFiltered, nbaService.sortBy, true);
@@ -343,6 +352,9 @@ $(document).ready(function() {
         // get current season players if first time on page, otherwise use previous data
         if (nbaService.playersTeamFiltered.length == 0) {
             getPlayerData(nbaService.season, nbaService.seasonType);
+        }
+        else if (nbaService.sortBy == "") {
+            $scope.playerList = $filter('orderBy')(nbaService.playersTeamFiltered, "pts", true);
         }
         else {
             $scope.playerList = $filter('orderBy')(nbaService.playersTeamFiltered, nbaService.sortBy, true);

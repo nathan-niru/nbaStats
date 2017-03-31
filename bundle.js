@@ -11,7 +11,7 @@ $(document).ready(function() {
             restrict: 'A',
             replace: true,
             scope: false,
-            templateUrl: 'header.html',
+            templateUrl: 'templates/header.html',
             controller: 'headerController'
         }
     });
@@ -80,16 +80,16 @@ $(document).ready(function() {
     module.config(function($routeProvider) {
         $routeProvider
         .when("/", {
-            templateUrl : "stats.html",
+            templateUrl : "templates/stats.html",
         })
         .when("/leaders", {
-             templateUrl : "leaders.html"
+             templateUrl : "templates/leaders.html"
         })
         .when("/compare", {
-             templateUrl : "compare.html"
+             templateUrl : "templates/compare.html"
         })
         .when("/advanced", {
-             templateUrl : "advanced.html"
+             templateUrl : "templates/advanced.html"
         });
     });
     
