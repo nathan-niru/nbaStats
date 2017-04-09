@@ -445,6 +445,18 @@ $(document).ready(function() {
                 nba.stats.playerStats({Season: season, SeasonType: seasonType, PerMode: perMode}).then(function(data) {
                     defer.resolve(data);
                     nbaService.allPlayers = data.leagueDashPlayerStats;
+                    
+                    var listByGP = $filter('orderBy')(nbaService.allPlayers, "gp", true);
+                    if (listByGP != undefined && listByGP.length > 0) {
+                    var minGames = listByGP[0].gp * 0.25;
+                    nbaService.allPlayers = $filter('filter')(nbaService.allPlayers, 
+                            function(value, index, array) {
+                                if (value.gp > minGames) return true;
+                                else return false;
+                            }
+                        );
+                    }
+                    
                     nbaService.allPlayers = $filter('orderBy')(nbaService.allPlayers, "pts", true);
                     nbaService.playersTeamFiltered = nbaService.allPlayers;
                     nbaService.season = season;
